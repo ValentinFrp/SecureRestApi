@@ -1,0 +1,171 @@
+### Secure REST API - Examples Collection
+### Use with VSCode REST Client extension or similar tools
+
+@baseUrl = http://localhost:8080
+@token = your_token_here
+
+### ============================================
+### PUBLIC ENDPOINTS
+### ============================================
+
+### 1. Health Check
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+### 2. Register a new user
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+
+### 3. Register - Empty Email (Should fail with 400)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": "password123"
+}
+
+### 4. Register - Duplicate Email (Should fail with 409)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "anotherPassword"
+}
+
+### 5. Login with existing user
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "securePassword123"
+}
+
+### 6. Login - Wrong Password (Should fail with 401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "wrongPassword"
+}
+
+### 7. Login - Non-existent User (Should fail with 401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "password123"
+}
+
+### ============================================
+### PROTECTED ENDPOINTS
+### ============================================
+
+### 8. Get current user profile (Protected)
+### Replace {{token}} with actual JWT token from login/register response
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### 9. Access protected route without token (Should fail with 401)
+GET {{baseUrl}}/api/auth/me
+
+### 10. Access protected route with invalid token (Should fail with 401)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer invalid_token_12345
+
+### ============================================
+### CURL EXAMPLES
+### ============================================
+
+# Health Check
+# curl http://localhost:8080/health
+
+# Register
+# curl -X POST http://localhost:8080/api/auth/register \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"test@example.com","password":"password123"}'
+
+# Login
+# curl -X POST http://localhost:8080/api/auth/login \
+#   -H "Content-Type: application/json" \
+#   -d '{"email":"test@example.com","password":"password123"}'
+
+# Get Profile (replace TOKEN with actual token)
+# curl http://localhost:8080/api/auth/me \
+#   -H "Authorization: Bearer TOKEN"
+
+### ============================================
+### WORKFLOW EXAMPLE
+### ============================================
+
+### Step 1: Register a new user
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "workflow@example.com",
+  "password": "myPassword123"
+}
+
+# Copy the "token" from the response above
+
+### Step 2: Use the token to access protected route
+# Replace the token in @token variable at the top
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJlbWFpbCI6IndvcmtmbG93QGV4YW1wbGUuY29tIiwiaXNzIjoic2VjdXJlLXJlc3QtYXBpIiwiaWF0IjoxNzA1MzIwMDAwLCJleHAiOjE3MDU0MDY0MDB9.signature
+
+### Step 3: Login again
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "workflow@example.com",
+  "password": "myPassword123"
+}
+
+### ============================================
+### EXPECTED RESPONSES
+### ============================================
+
+# Register Success (201):
+# {
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "user": {
+#     "id": 1,
+#     "email": "john.doe@example.com",
+#     "created_at": "2024-01-15T10:30:00Z",
+#     "updated_at": "2024-01-15T10:30:00Z"
+#   }
+# }
+
+# Login Success (200):
+# {
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+#   "user": {
+#     "id": 1,
+#     "email": "john.doe@example.com",
+#     "created_at": "2024-01-15T10:30:00Z",
+#     "updated_at": "2024-01-15T10:30:00Z"
+#   }
+# }
+
+# Profile Success (200):
+# {
+#   "id": 1,
+#   "email": "john.doe@example.com",
+#   "created_at": "2024-01-15T10:30:00Z"
+# }
+
+# Error Response (401/400/409):
+# {
+#   "error": "error message here"
+# }
