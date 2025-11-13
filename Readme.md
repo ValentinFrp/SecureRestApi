@@ -1,6 +1,30 @@
 # Secure REST API - Clean Architecture
 
+[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go)](https://go.dev/)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![CI](https://img.shields.io/badge/CI-Passing-success)](https://github.com/valentinfrappart/SecureRestApi/actions)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-blueviolet)](ARCHITECTURE.md)
+
 Une API REST sécurisée d'authentification en Go, implémentant la **Clean Architecture** (Ports & Adapters).
+
+## 💡 Pourquoi ce projet ?
+
+Ce projet démontre :
+- **Clean Architecture** appliquée à Go (Ports & Adapters)
+- **Sécurité** : JWT + bcrypt + bonnes pratiques
+- **Testabilité** : Tests unitaires avec mocks, sans dépendances externes
+- **SOLID Principles** : Dependency Inversion, Single Responsibility
+- **Production-ready** : Docker, CI/CD, documentation complète
+
+## 🛠️ Stack Technique
+
+- **Language**: Go 1.21+
+- **Architecture**: Clean Architecture (Ports & Adapters)
+- **Authentication**: JWT (golang-jwt/jwt/v5)
+- **Password Hashing**: bcrypt (golang.org/x/crypto)
+- **Database**: SQLite 3 (mattn/go-sqlite3)
+- **Testing**: Go native testing + mocks
+- **Containerization**: Docker (multi-stage builds)
 
 ## Architecture
 
@@ -85,6 +109,19 @@ docker build -t secure-rest-api .
 
 # Lancer le conteneur
 docker run -p 8080:8080 -v $(pwd)/data:/root/data secure-rest-api
+```
+
+### Option 3 : Avec Docker Compose (recommandé)
+
+```bash
+# Lancer l'application
+docker-compose up -d
+
+# Voir les logs
+docker-compose logs -f
+
+# Arrêter l'application
+docker-compose down
 ```
 
 L'API sera disponible sur `http://localhost:8080`
