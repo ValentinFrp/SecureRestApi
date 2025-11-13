@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	httpDelivery "github.com/valentinfrappart/securerestapi/internal/delivery/http"
 	"github.com/valentinfrappart/securerestapi/internal/infrastructure/database"
 	"github.com/valentinfrappart/securerestapi/internal/infrastructure/repository"
@@ -14,6 +15,10 @@ import (
 )
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables or defaults")
+	}
+
 	port := getEnv("PORT", "8080")
 	dbPath := getEnv("DB_PATH", "./data/app.db")
 	jwtSecret := getEnv("JWT_SECRET", "your-super-secret-key-change-this-in-production")
